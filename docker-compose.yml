@@ -5,10 +5,10 @@ services:
     container_name: attendify_mysql
     restart: unless-stopped
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpass123
-      - MYSQL_DATABASE=attendify_db
-      - MYSQL_USER=attendify_user
-      - MYSQL_PASSWORD=attendify_pass
+      MYSQL_ROOT_PASSWORD: rootpass123
+      MYSQL_DATABASE: attendify_db
+      MYSQL_USER: attendify_user
+      MYSQL_PASSWORD: attendify_pass
     ports:
       - "3306:3306"
     volumes:
@@ -66,6 +66,26 @@ services:
       mysql:
         condition: service_healthy
     command: npm run dev
+
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: attendify_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:5000
+    networks:
+      - attendify_network
+    depends_on:
+      backend:
+        condition: service_started
 
 volumes:
   mysql_data:

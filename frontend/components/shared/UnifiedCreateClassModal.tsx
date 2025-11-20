@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { createAdHocSession, addCourse, updateCourse } from '../../services/mockApi';
 import type { User, ClassRoutine } from '../../types';
-import { XIcon, CalendarIcon, PlayIcon } from '../shared/icons';
+import { XIcon, CalendarIcon, PlayIcon } from './icons';
 import { format, addHours } from 'date-fns';
 import toast from 'react-hot-toast';
 
