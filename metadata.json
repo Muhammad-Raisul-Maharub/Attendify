@@ -1,0 +1,7 @@
+{
+  "name": "Attendify",
+  "description": "A modern, mobile-first web application to manage university class attendance with role-specific dashboards for students, teachers, and admins, featuring real-time attendance capture and basic analytics.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

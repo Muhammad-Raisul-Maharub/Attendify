@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendify - Smart Attendance Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              // Bubblegum Theme Palette
+              primary: {
+                'DEFAULT': '#EC4899', // Pink-500
+                '50': '#FDF2F8',
+                '100': '#FCE7F3',
+                '200': '#FBCFE8',
+                '300': '#F9A8D4',
+                '400': '#F472B6',
+                '500': '#EC4899',
+                '600': '#DB2777',
+                '700': '#BE185D',
+                '800': '#9D174D',
+                '900': '#831843',
+                '950': '#500724'
+              },
+              accent: {
+                'DEFAULT': '#8B5CF6', // Violet-500
+                '50': '#F5F3FF',
+                '500': '#8B5CF6',
+                '600': '#7C3AED'
+              },
+              slate: {
+                '800': '#1e293b', 
+                '900': '#0f172a'
+              },
+              success: '#10B981',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/styles.css">
+  <script type="importmap">
+{
+  "imports": {
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.4.1",
+    "react-hot-toast": "https://aistudiocdn.com/react-hot-toast@^2.6.0",
+    "qrcode.react": "https://aistudiocdn.com/qrcode.react@^4.2.0",
+    "date-fns": "https://aistudiocdn.com/date-fns@^4.1.0",
+    "html5-qrcode": "https://aistudiocdn.com/html5-qrcode@^2.3.8"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-slate-50 dark:bg-slate-900 antialiased text-slate-800 dark:text-slate-200 transition-colors duration-300">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
