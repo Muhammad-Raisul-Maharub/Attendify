@@ -1,0 +1,872 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                   ATTENDIFY - COMPLETE USAGE MANUAL                          ║
+║         Step-by-Step Guide for Setup, Usage, and Administration              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+TABLE OF CONTENTS
+═══════════════════════════════════════════════════════════════════════════════
+
+PART 1: SETUP & INSTALLATION
+  1.1  Prerequisites
+  1.2  Initial Setup (Primary PC)
+  1.3  Collaborator Setup (Additional PCs)
+  1.4  Verifying Installation
+
+PART 2: DOCKER & DATABASE MANAGEMENT
+  2.1  Docker Commands Reference
+  2.2  Accessing Adminer
+  2.3  Using Adminer for CRUD Operations
+  2.4  Viewing Database Schema
+  2.5  Running SQL Queries
+
+PART 3: APPLICATION USAGE
+  3.1  Student Workflow
+  3.2  Teacher Workflow
+  3.3  Admin Workflow
+  3.4  Profile Management
+  3.5  Attendance Marking Methods
+
+PART 4: ADVANCED TOPICS
+  4.1  Backend API Integration
+  4.2  Database Backup & Restore
+  4.3  Environment Configuration
+  4.4  Offline Operation
+  4.5  Performance Optimization
+
+PART 5: TROUBLESHOOTING & FAQ
+  5.1  Common Issues
+  5.2  Error Messages
+  5.3  FAQ
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 1: SETUP & INSTALLATION
+═══════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────────────
+1.1  PREREQUISITES
+────────────────────────────────────────────────────────────────────────────────
+
+Required Software:
+  ☑ Docker Desktop 4.0+ (Download from docker.com)
+  ☑ Git 2.30+ (Download from git-scm.com)
+  ☑ Node.js 18+ (Download from nodejs.org)
+  ☑ Text editor (VS Code recommended)
+  ☑ Web browser (Chrome/Firefox/Edge)
+
+System Requirements:
+  • OS: Windows 10/11, macOS 11+, or Linux
+  • RAM: 4GB minimum (8GB recommended)
+  • Disk Space: 5GB available
+  • Network: Internet for initial setup only
+
+────────────────────────────────────────────────────────────────────────────────
+1.2  INITIAL SETUP (PRIMARY PC)
+────────────────────────────────────────────────────────────────────────────────
+
+STEP 1: Install Docker Desktop
+  1. Download Docker Desktop from https://www.docker.com/products/docker-desktop
+  2. Run installer and follow prompts
+  3. Restart computer if prompted
+  4. Launch Docker Desktop and wait for it to start
+  5. Verify: Open terminal and run:
+     
+     docker --version
+     docker compose version
+     
+     You should see version numbers
+
+STEP 2: Clone the Repository
+  Open terminal/command prompt and run:
+  
+  git clone <your-repository-url>
+  cd attendify
+
+STEP 3: Create Directory Structure
+  Run these commands in the attendify folder:
+  
+  # Windows Command Prompt:
+  mkdir backend\src\config backend\src\routes backend\src\middleware docker\init-scripts
+  
+  # macOS/Linux/Windows PowerShell:
+  mkdir -p backend/src/config backend/src/routes backend/src/middleware docker/init-scripts
+
+STEP 4: Copy All Provided Files
+  Place files in their correct locations as per the project structure:
+  
+  • docker-compose.yml          → Root directory
+  • backend/package.json         → backend/
+  • backend/Dockerfile           → backend/
+  • backend/.env                 → backend/
+  • backend/src/server.js        → backend/src/
+  • backend/src/config/*         → backend/src/config/
+  • backend/src/routes/*         → backend/src/routes/
+  • docker/init-scripts/*.sql    → docker/init-scripts/
+
+STEP 5: Start Docker Services
+  In the attendify root directory, run:
+  
+  docker compose up -d
+  
+  Expected output:
+  ✓ Network attendify_network      Created
+  ✓ Volume attendify_mysql_data    Created
+  ✓ Container attendify_mysql      Started
+  ✓ Container attendify_adminer    Started
+  ✓ Container attendify_backend    Started
+  
+  Wait 30 seconds for MySQL to initialize (first time only)
+
+STEP 6: Verify Backend is Running
+  Check backend health:
+  
+  curl http://localhost:5000/health
+  
+  Expected response:
+  {"status":"healthy","database":"connected","timestamp":"..."}
+
+STEP 7: Install Frontend Dependencies
+  In the attendify root directory:
+  
+  npm install
+
+STEP 8: Start Frontend Development Server
+  npm run dev
+  
+  Expected output:
+  VITE v6.x.x  ready in xxx ms
+  ➜  Local:   http://localhost:3000/
+
+STEP 9: Open Application
+  Open browser and navigate to:
+  http://localhost:3000
+  
+  You should see the login page
+
+STEP 10: Verify Database in Adminer
+  1. Open http://localhost:8080 in browser
+  2. Login with:
+     System:   MySQL
+     Server:   mysql
+     Username: attendify_user
+     Password: attendify_pass
+     Database: attendify_db
+  3. Click "Login"
+  4. You should see database tables listed
+
+✅ Setup Complete! The system is now fully operational.
+
+────────────────────────────────────────────────────────────────────────────────
+1.3  COLLABORATOR SETUP (ADDITIONAL PCs)
+────────────────────────────────────────────────────────────────────────────────
+
+For team members to run the same system on their computers:
+
+STEP 1: Install Prerequisites
+  • Docker Desktop
+  • Git
+  • Node.js 18+
+
+STEP 2: Clone Repository
+  git clone <repository-url>
+  cd attendify
+
+STEP 3: Start Services
+  docker compose up -d
+  npm install
+  npm run dev
+
+STEP 4: Access Application
+  • Frontend: http://localhost:3000
+  • Adminer: http://localhost:8080
+  • Backend API: http://localhost:5000
+
+⚠ IMPORTANT: Each PC has its own local database. Data is not shared between
+            PCs unless you set up a shared MySQL server (advanced topic).
+
+────────────────────────────────────────────────────────────────────────────────
+1.4  VERIFYING INSTALLATION
+────────────────────────────────────────────────────────────────────────────────
+
+Run these checks to ensure everything works:
+
+✓ Check Docker Containers:
+  docker ps
+  
+  You should see 3 running containers:
+  - attendify_mysql
+  - attendify_adminer
+  - attendify_backend
+
+✓ Check Backend Logs:
+  docker logs attendify_backend
+  
+  Should show: "Attendify Backend API Server Running on: http://localhost:5000"
+
+✓ Check MySQL Connection:
+  docker exec -it attendify_mysql mysql -u attendify_user -pattendify_pass -e "SHOW DATABASES;"
+  
+  Should list: attendify_db
+
+✓ Test Login:
+  1. Go to http://localhost:3000
+  2. Login with: student@attendify.app / 123 / Role: Student
+  3. Should redirect to student dashboard
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 2: DOCKER & DATABASE MANAGEMENT
+═══════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────────────
+2.1  DOCKER COMMANDS REFERENCE
+────────────────────────────────────────────────────────────────────────────────
+
+Start all services:
+  docker compose up -d
+
+Stop all services:
+  docker compose down
+
+View running containers:
+  docker ps
+
+View all containers (including stopped):
+  docker ps -a
+
+View logs (all services):
+  docker compose logs
+
+View logs (specific service):
+  docker logs attendify_mysql
+  docker logs attendify_backend
+  docker logs attendify_adminer
+
+Follow logs in real-time:
+  docker logs -f attendify_backend
+
+Restart a service:
+  docker restart attendify_backend
+
+Stop and remove everything (INCLUDING DATA):
+  docker compose down -v
+  ⚠ WARNING: This deletes all database data!
+
+View volumes:
+  docker volume ls
+
+Inspect a volume:
+  docker volume inspect attendify_mysql_data
+
+Execute command inside MySQL container:
+  docker exec -it attendify_mysql mysql -u root -prootpass123
+
+────────────────────────────────────────────────────────────────────────────────
+2.2  ACCESSING ADMINER
+────────────────────────────────────────────────────────────────────────────────
+
+Adminer is a lightweight database management tool (like phpMyAdmin).
+
+URL: http://localhost:8080
+
+LOGIN DETAILS:
+  System:   MySQL
+  Server:   mysql  (or "attendify_mysql" - use container name)
+  Username: attendify_user
+  Password: attendify_pass
+  Database: attendify_db
+
+After login, you'll see the database structure and can perform operations.
+
+────────────────────────────────────────────────────────────────────────────────
+2.3  USING ADMINER FOR CRUD OPERATIONS
+────────────────────────────────────────────────────────────────────────────────
+
+📌 VIEWING DATA (READ)
+────────────────────────────────────────────────────────────────────────────────
+1. Click on a table name (e.g., "users") in left sidebar
+2. Click "Select data" button
+3. View all records in table
+4. Use filters and sorting as needed
+
+📌 INSERTING DATA (CREATE)
+────────────────────────────────────────────────────────────────────────────────
+METHOD 1: Using Insert Form (No SQL needed)
+  1. Click table name (e.g., "users")
+  2. Click "New item" button
+  3. Fill in form fields:
+     id: u1234567890
+     auth_uid: auth1234567890
+     email: newuser@example.com
+     full_name: John Doe
+     password: 123
+     role_id: 1 (for student)
+     student_id: S003
+  4. Click "Save" button
+  5. ✅ Record created!
+
+METHOD 2: Using SQL
+  1. Click "SQL command" tab at top
+  2. Enter query:
+     
+     INSERT INTO users (id, auth_uid, email, full_name, password, role_id, student_id)
+     VALUES ('u1234', 'auth1234', 'test@test.com', 'Test User', '123', 1, 'S100');
+     
+  3. Click "Execute" button
+
+📌 UPDATING DATA (UPDATE)
+────────────────────────────────────────────────────────────────────────────────
+METHOD 1: Using Edit Form (No SQL needed)
+  1. Click table name
+  2. Click "Select data"
+  3. Click "edit" link next to the record you want to change
+  4. Modify fields (e.g., change full_name to "Jane Doe")
+  5. Click "Save"
+  6. ✅ Record updated!
+
+METHOD 2: Using SQL
+  1. Click "SQL command" tab
+  2. Enter query:
+     
+     UPDATE users 
+     SET full_name = 'Jane Doe', email = 'jane@example.com'
+     WHERE id = 'u1234';
+     
+  3. Click "Execute"
+
+📌 DELETING DATA (DELETE)
+────────────────────────────────────────────────────────────────────────────────
+METHOD 1: Using Delete Button (No SQL needed)
+  1. Click table name
+  2. Click "Select data"
+  3. Check the checkbox next to record(s) to delete
+  4. Scroll down and click "Delete" button
+  5. Confirm deletion
+  6. ✅ Record deleted!
+
+METHOD 2: Using SQL
+  1. Click "SQL command" tab
+  2. Enter query:
+     
+     DELETE FROM users WHERE id = 'u1234';
+     
+  3. Click "Execute"
+  
+⚠ WARNING: Deleting records may fail if they have foreign key relationships.
+          Always delete child records first (e.g., attendance before sessions).
+
+📌 SEARCHING/FILTERING
+────────────────────────────────────────────────────────────────────────────────
+1. Click table name
+2. Click "Select data"
+3. Use "Search" option in filters
+4. Example: Find all students with "John" in name:
+   - Column: full_name
+   - Operator: LIKE
+   - Value: %John%
+5. Click "Select" button
+
+────────────────────────────────────────────────────────────────────────────────
+2.4  VIEWING DATABASE SCHEMA
+────────────────────────────────────────────────────────────────────────────────
+
+In Adminer:
+1. Click a table name (e.g., "users")
+2. Click "Show structure" tab
+3. View:
+   • Column names and types
+   • Indexes
+   • Foreign keys
+   • Auto-increment settings
+
+You can also see the CREATE TABLE statement by clicking "SQL command" tab
+and viewing the structure.
+
+────────────────────────────────────────────────────────────────────────────────
+2.5  RUNNING SQL QUERIES
+────────────────────────────────────────────────────────────────────────────────
+
+USEFUL QUERIES:
+
+Count total users by role:
+─────────────────────────────────────────────────────────────────────────────
+SELECT r.name as role, COUNT(*) as count
+FROM users u
+JOIN roles r ON u.role_id = r.id
+GROUP BY r.name;
+─────────────────────────────────────────────────────────────────────────────
+
+Find all students who attended a specific session:
+─────────────────────────────────────────────────────────────────────────────
+SELECT u.full_name, u.student_id, a.checked_in_at
+FROM attendance a
+JOIN users u ON a.student_id = u.id
+WHERE a.session_id = 'sample-20241120'
+ORDER BY a.checked_in_at;
+─────────────────────────────────────────────────────────────────────────────
+
+View attendance percentage for all students:
+─────────────────────────────────────────────────────────────────────────────
+SELECT 
+  u.full_name,
+  u.student_id,
+  COUNT(DISTINCT a.session_id) as classes_attended,
+  (SELECT COUNT(*) FROM sessions WHERE status = 'completed') as total_classes,
+  ROUND(COUNT(DISTINCT a.session_id) / 
+    (SELECT COUNT(*) FROM sessions WHERE status = 'completed') * 100, 2) 
+    as attendance_percentage
+FROM users u
+LEFT JOIN attendance a ON u.id = a.student_id
+WHERE u.role_id = 1
+GROUP BY u.id
+ORDER BY attendance_percentage DESC;
+─────────────────────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 3: APPLICATION USAGE
+═══════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────────────
+3.1  STUDENT WORKFLOW
+────────────────────────────────────────────────────────────────────────────────
+
+LOGIN:
+  1. Navigate to http://localhost:3000
+  2. Enter credentials:
+     Email: student@attendify.app
+     Password: 123
+     Role: Student
+  3. Click "Sign in"
+
+MARK ATTENDANCE:
+  METHOD 1: Quick Check-in (QR Code)
+    1. On dashboard, click "Scan QR Code" button
+    2. Allow camera permissions
+    3. Point camera at teacher's QR code
+    4. Attendance marked automatically!
+  
+  METHOD 2: Enter Passcode
+    1. Click "Enter Passcode"
+    2. Type 6-character code shown by teacher
+    3. Click "Submit Code"
+  
+  METHOD 3: From Class Card
+    1. Find your ongoing class in "Today's Classes"
+    2. Click "Mark Attendance" button
+    3. Scan QR or enter passcode
+
+VIEW HISTORY:
+  1. Click "History" in navigation
+  2. Filter by:
+     - Course
+     - Date range
+     - Sort order
+  3. See all past sessions with Present/Absent status
+
+VIEW PROFILE:
+  1. Click "Profile" in navigation
+  2. View:
+     - Attendance summary
+     - Upcoming classes
+     - Recent history
+  3. Edit your name (limit: 2 changes per 6 months)
+
+────────────────────────────────────────────────────────────────────────────────
+3.2  TEACHER WORKFLOW
+────────────────────────────────────────────────────────────────────────────────
+
+LOGIN:
+  Email: arif@attendify.app
+  Password: 123
+  Role: Teacher
+
+CREATE INSTANT SESSION:
+  1. Click "Create Session" button
+  2. Choose "Instant" tab
+  3. Fill in:
+     - Course code (e.g., CSE 413)
+     - Course name
+     - Room number
+     - Start/End time
+  4. Click "Start Session Now"
+  5. Session goes live immediately!
+
+ADD TO SCHEDULE:
+  1. Click "Create Session"
+  2. Choose "Routine" tab
+  3. Fill in:
+     - Day of week
+     - Times
+     - Course details
+     - Room
+  4. Click "Add to Schedule"
+
+START A SCHEDULED SESSION:
+  1. Find session in "Today's Sessions"
+  2. Click "Start Session" button
+  3. QR modal opens automatically
+
+MANAGE LIVE SESSION:
+  1. "Show QR" - Display QR code for students
+  2. "Live Roster" - See who has checked in
+  3. "End Session" - Close attendance
+  
+  QR Features:
+  - Timer shows passcode expiry
+  - Add/subtract time (-10s, +30s buttons)
+  - Refresh code anytime
+  - Pause/Resume attendance
+
+VIEW ANALYTICS:
+  1. Click "Analytics" in navigation
+  2. Filter by course
+  3. View:
+     - Attendance trends
+     - Student participation
+     - Session statistics
+
+EXPORT REPORTS:
+  1. Click "Export" button
+  2. Select course and time period (daily/weekly/monthly)
+  3. Click period button
+  4. CSV file downloads automatically
+
+────────────────────────────────────────────────────────────────────────────────
+3.3  ADMIN WORKFLOW
+────────────────────────────────────────────────────────────────────────────────
+
+LOGIN:
+  Email: admin@attendify.app
+  Password: 123
+  Role: Admin
+
+MANAGE USERS:
+  1. Navigate to "Users" tab
+  2. View all users with role-based filtering
+  
+  Add User:
+    1. Click "Add User" button
+    2. Fill form (name, email, password, role, student ID if applicable)
+    3. Click "Save"
+  
+  Edit User:
+    1. Click edit icon next to user
+    2. Modify fields
+    3. Click "Save"
+  
+  Delete User:
+    1. Click delete icon
+    2. Confirm deletion
+
+VIEW AUDIT LOGS:
+  1. Click "Audit Logs" tab
+  2. Filter by:
+     - Role (admin/teacher/system)
+     - Date range
+  3. View all system activities
+  4. Export logs as CSV
+
+SYSTEM ANALYTICS:
+  1. Click "Analytics" in navigation
+  2. View:
+     - User distribution pie chart
+     - Total system metrics
+     - Active classes count
+
+────────────────────────────────────────────────────────────────────────────────
+3.4  PROFILE MANAGEMENT
+────────────────────────────────────────────────────────────────────────────────
+
+All users can access Profile page:
+
+UPDATE NAME (Students & Teachers only):
+  1. Click edit icon next to your name
+  2. Enter new name
+  3. Click checkmark
+  
+  Restrictions:
+  - Maximum 2 changes every 6 months
+  - Tracked in database automatically
+
+CHANGE PASSWORD:
+  1. Scroll to "Change Password" section
+  2. Enter current password
+  3. Enter new password
+  4. Click "Change Password"
+
+STUDENTS SEE:
+  - Attendance summary stats
+  - Upcoming classes list
+  - Recent history
+
+TEACHERS/ADMINS SEE:
+  - Profile edit form
+  - Password change form
+
+────────────────────────────────────────────────────────────────────────────────
+3.5  ATTENDANCE MARKING METHODS
+────────────────────────────────────────────────────────────────────────────────
+
+METHOD 1: QR CODE SCANNING
+  ✓ Fastest method
+  ✓ Most secure (unique per session)
+  ✓ Requires camera permission
+  
+  How it works:
+  1. Teacher generates QR code in session
+  2. Student scans with camera
+  3. QR contains encrypted session ID and token
+  4. Validated against active passcode
+  5. Attendance recorded instantly
+
+METHOD 2: PASSCODE ENTRY
+  ✓ Works without camera
+  ✓ Can be shared verbally
+  ✓ 6-character alphanumeric code
+  
+  How it works:
+  1. Teacher shows 6-digit code on screen
+  2. Student types code in app or QR modal
+  3. Code validated (case-insensitive)
+  4. Expiry checked (default 60 seconds)
+  5. Attendance recorded
+
+METHOD 3: MANUAL (Admin only via Adminer)
+  ✓ For corrections/exceptions
+  ✓ Requires database access
+  
+  Steps in Adminer:
+  1. Go to attendance table
+  2. Click "New item"
+  3. Fill: session_id, student_id, check_method: 'manual'
+  4. Save
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 4: ADVANCED TOPICS
+═══════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────────────
+4.1  BACKEND API INTEGRATION
+────────────────────────────────────────────────────────────────────────────────
+
+The frontend needs to be updated to use the backend API instead of mockApi.
+
+EXAMPLE: Update Auth Service
+
+Replace services/authService.ts with API calls:
+
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api';
+
+export const loginUser = async (email: string, password: string, role: string) => {
+  const response = await axios.post(`${API_URL}/auth/login`, {
+    email, password, role
+  });
+  
+  if (response.data.success) {
+    localStorage.setItem('token', response.data.token);
+    return { success: true, user: response.data.user };
+  }
+  return { success: false, message: response.data.message };
+};
+
+Repeat this pattern for all services to integrate with backend.
+
+────────────────────────────────────────────────────────────────────────────────
+4.2  DATABASE BACKUP & RESTORE
+────────────────────────────────────────────────────────────────────────────────
+
+BACKUP DATABASE:
+  docker exec attendify_mysql mysqldump -u root -prootpass123 attendify_db > backup.sql
+
+RESTORE DATABASE:
+  cat backup.sql | docker exec -i attendify_mysql mysql -u root -prootpass123 attendify_db
+
+EXPORT SPECIFIC TABLE:
+  docker exec attendify_mysql mysqldump -u root -prootpass123 attendify_db users > users_backup.sql
+
+────────────────────────────────────────────────────────────────────────────────
+4.3  ENVIRONMENT CONFIGURATION
+────────────────────────────────────────────────────────────────────────────────
+
+Modify backend/.env for customization:
+
+# Change database password:
+DB_PASSWORD=your_new_secure_password
+
+# Change JWT secret (IMPORTANT for production):
+JWT_SECRET=your_very_long_and_random_secret_key
+
+# Enable CORS for multiple origins:
+CORS_ORIGIN=http://localhost:3000,http://192.168.1.100:3000
+
+After changes, restart backend:
+  docker restart attendify_backend
+
+────────────────────────────────────────────────────────────────────────────────
+4.4  OFFLINE OPERATION
+────────────────────────────────────────────────────────────────────────────────
+
+After first setup, the system works fully OFFLINE:
+
+✓ Docker images cached locally
+✓ Database persistent in volume
+✓ No internet needed for operation
+
+OFFLINE USAGE:
+  1. Ensure Docker Desktop is running
+  2. Run: docker compose up -d
+  3. Run: npm run dev
+  4. Access app at http://localhost:3000
+
+NOTE: Cannot pull new images or npm packages without internet.
+
+────────────────────────────────────────────────────────────────────────────────
+4.5  PERFORMANCE OPTIMIZATION
+────────────────────────────────────────────────────────────────────────────────
+
+For better performance:
+
+1. Increase MySQL memory:
+   Edit docker-compose.yml, add to mysql service:
+   
+   command: --max-connections=200 --innodb-buffer-pool-size=256M
+
+2. Enable backend caching:
+   Install redis and add caching layer for frequently accessed data
+
+3. Database indexing:
+   Already included in schema, but can add more as needed
+
+4. Frontend optimization:
+   Build production bundle:
+   npm run build
+   
+   Then serve with: npx serve dist
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 5: TROUBLESHOOTING & FAQ
+═══════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────────────────────
+5.1  COMMON ISSUES
+────────────────────────────────────────────────────────────────────────────────
+
+ISSUE: "docker: command not found"
+SOLUTION: 
+  - Install Docker Desktop
+  - Restart terminal after installation
+  - Verify: docker --version
+
+ISSUE: "port is already allocated"
+SOLUTION:
+  - Check what's using the port: netstat -ano | findstr :3306
+  - Stop the conflicting service or change port in docker-compose.yml
+
+ISSUE: "Cannot connect to MySQL" in Adminer
+SOLUTION:
+  - Use server name "mysql" not "localhost"
+  - Wait 30 seconds after first startup
+  - Check if container is running: docker ps
+
+ISSUE: Backend returns 503 Service Unavailable
+SOLUTION:
+  - MySQL may not be ready yet, wait 30 seconds
+  - Check logs: docker logs attendify_backend
+  - Restart: docker restart attendify_backend
+
+ISSUE: Frontend shows blank page
+SOLUTION:
+  - Check browser console for errors (F12)
+  - Ensure backend is running: curl http://localhost:5000/health
+  - Clear browser cache (Ctrl+Shift+Delete)
+
+────────────────────────────────────────────────────────────────────────────────
+5.2  ERROR MESSAGES
+────────────────────────────────────────────────────────────────────────────────
+
+"ECONNREFUSED" errors:
+  → Backend not running. Run: docker compose up -d
+
+"ER_ACCESS_DENIED_ERROR":
+  → Wrong database credentials. Check backend/.env
+
+"Table doesn't exist":
+  → Database not initialized. Check: docker logs attendify_mysql
+  → Ensure init scripts ran on first startup
+
+"Port 3000 already in use":
+  → Another app using port. Change Vite port in vite.config.ts or stop other app
+
+"Cannot find module":
+  → Missing dependencies. Run: npm install
+
+────────────────────────────────────────────────────────────────────────────────
+5.3  FAQ
+────────────────────────────────────────────────────────────────────────────────
+
+Q: How do I reset the entire database?
+A: Run: docker compose down -v (WARNING: Deletes all data)
+   Then: docker compose up -d (Re-initializes with seed data)
+
+Q: Can I use this with a remote MySQL server?
+A: Yes! Update backend/.env:
+   DB_HOST=remote-server-ip
+   DB_PORT=3306
+   Then comment out mysql service in docker-compose.yml
+
+Q: How do I change default passwords?
+A: 
+   1. Update docker-compose.yml (MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD)
+   2. Update backend/.env (DB_PASSWORD)
+   3. Rebuild: docker compose down -v && docker compose up -d
+
+Q: Can multiple users share the same database?
+A: Yes, if they connect to the same MySQL server. For local development,
+   each PC has its own database. For shared data, set up a central MySQL
+   server and have all PCs connect to it.
+
+Q: How do I deploy this to production?
+A: 
+   1. Set strong passwords in .env files
+   2. Use HTTPS (add nginx reverse proxy)
+   3. Use managed MySQL (AWS RDS, DigitalOcean)
+   4. Build frontend: npm run build
+   5. Deploy to hosting (Vercel, Netlify, etc.)
+
+Q: Does this work on mobile?
+A: The frontend is mobile-responsive. Access via mobile browser at
+   http://<your-pc-ip>:3000. For production, deploy to web hosting.
+
+Q: How do I add more teachers/students/courses?
+A: Three ways:
+   1. Use app's signup page (users create accounts)
+   2. Use admin panel (admin creates accounts)
+   3. Use Adminer (insert directly into database)
+
+Q: Can I change the port numbers?
+A: Yes! Edit docker-compose.yml:
+   ports:
+     - "YOUR_PORT:3306"  # MySQL
+     - "YOUR_PORT:8080"  # Adminer
+     - "YOUR_PORT:5000"  # Backend
+
+Q: How do I backup my data regularly?
+A: Set up a cron job (Linux/Mac) or Task Scheduler (Windows):
+   
+   # Linux/Mac crontab:
+   0 2 * * * docker exec attendify_mysql mysqldump -u root -prootpass123 attendify_db > /backup/attendify_$(date +\%Y\%m\%d).sql
+   
+   # Windows Task Scheduler:
+   Run: backup.bat daily at 2 AM
+   Content: docker exec attendify_mysql mysqldump -u root -prootpass123 attendify_db > C:\backup\attendify_%date%.sql
+
+═══════════════════════════════════════════════════════════════════════════════
+
+For additional help:
+  • Check README.txt for overview
+  • Review code comments in backend/src/
+  • Check Docker logs: docker logs <container-name>
+  • Create GitHub issue for bugs
+
+═══════════════════════════════════════════════════════════════════════════════
